@@ -20,3 +20,9 @@ kotlin {
 tasks.test {
     useJUnitPlatform()
 }
+
+// support æøå
+tasks.withType<JavaExec>().configureEach {
+    defaultCharacterEncoding = "UTF-8"
+    jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8", "-Dstdin.encoding=UTF-8")
+}
