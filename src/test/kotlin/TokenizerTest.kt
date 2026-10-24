@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class TokenizerTest {
 
     @Test
-    fun `setning blir delt i ord, mellomrom og tegn`() {
+    fun `sentence is split into words, spaces and symbols`() {
         val tokens = tokenize("Javel, se det!")
         assertEquals(
             listOf(
@@ -23,14 +23,14 @@ class TokenizerTest {
     }
 
     @Test
-    fun `bindestrek inni ord og tall`() {
+    fun `hyphenated words stay whole and numbers get their own token`() {
         val tokens = tokenize("e-post kl 12")
         assertEquals(listOf("e-post", " ", "kl", " ", "12"), tokens.map { it.text })
         assertEquals(TokenType.TALL, tokens.last().type)
     }
 
     @Test
-    fun `sette sammen igjen gir nøyaktig samme tekst`() {
+    fun `combining the tokens gives back the exact same text`() {
         val setninger = listOf(
             "Hei, kommer du?",
             "Æ og dæ  ska på   tur.\tI mårra!",

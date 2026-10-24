@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class TranslatorTest {
 
     @Test
-    fun `uten ordliste blir teksten uendra`() {
+    fun `without ordliste the text is unchanged`() {
         val setninger = listOf(
             "Jeg skal på tur i morgen.",
             "Hei, kommer du?",
