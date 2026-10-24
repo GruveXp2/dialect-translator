@@ -4,12 +4,25 @@ package gruvexp
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 fun main() {
     while (true) {
-        println("Skriv 'exit' for å avslutte")
-        print("Skriv inn ei setning som skal oversettes t søgnemål: ")
-        val input = readln()
+        print("Skriv inn hva du vil gjør: ")
+        when (readln()) {
+            "søgnemål" -> {
+                while (true) {
+                    println("Skriv 'exit' for å avslutte")
+                    print("Skriv inn ei setning som skal oversettes t søgnemål: ")
+                    val input = readln()
 
-        if (input in listOf("exit", "stop", "stopp", "avslutt")) break
+                    if (input in listOf("exit", "stop", "stopp", "avslutt")) break
 
-        println("Oversatt t søgnemål: $input\n")
+                    println("Oversatt t søgnemål: $input\n")
+                }
+            }
+            "test_tokens" -> {
+                print("Skriv inn ei setning: ")
+                val rawSetning = readln()
+                val setning = tokenize(rawSetning)
+                println("$setning".replace("), Token", "),\nToken"))
+            }
+        }
     }
 }
