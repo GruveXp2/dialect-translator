@@ -1,4 +1,4 @@
-package gruvexp
+package dev.gruve
 
 enum class Ordklasse(val abbreviation: String) {
     SUBSTANTIV("subst"),

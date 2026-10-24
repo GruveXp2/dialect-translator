@@ -1,4 +1,4 @@
-package gruvexp
+package dev.gruve
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

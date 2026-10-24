@@ -1,4 +1,4 @@
-package gruvexp
+package dev.gruve
 
 enum class TokenType { ORD, TALL, MELLOMROM, TEGN }
 
