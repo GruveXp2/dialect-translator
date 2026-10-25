@@ -1,5 +1,6 @@
 package dev.gruve
 
+import kotlinx.serialization.SerializationException
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,6 +20,30 @@ class OrdlisteTest {
     fun `ordliste with another version is rejected`() {
         assertFailsWith<IllegalArgumentException> {
             parseOrdliste("""{ "version": 2, "words": {} }""")
+        }
+    }
+
+    @Test
+    fun `words are grouped by ordklasse name`() {
+        val ordliste = parseOrdliste(
+            """
+            {
+              "version": 1,
+              "words": {
+                "pronomen": { "jeg": { "form": "æ", "registered": "2026-10-25" } },
+                "adverb": { "også": { "form": "au", "registered": "2026-10-25" } }
+              }
+            }
+            """
+        )
+        assertEquals("æ", ordliste.words[Ordklasse.PRONOMEN]?.get("jeg")?.form)
+        assertEquals("au", ordliste.words[Ordklasse.ADVERB]?.get("også")?.form)
+    }
+
+    @Test
+    fun `unknown ordklasse is rejected`() {
+        assertFailsWith<SerializationException> {
+            parseOrdliste("""{ "version": 1, "words": { "pron": {} } }""")
         }
     }
 

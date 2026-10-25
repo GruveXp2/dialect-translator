@@ -8,13 +8,21 @@ import java.io.File
 const val ORDLISTE_FORMAT_VERSION = 1
 
 @Serializable
+data class WordEntry(
+    val form: String, // hva det blir oversatt til
+    val registered: String, // dato
+)
+
+@Serializable
 data class Ordliste(
     val version: Int,
-    val words: Map<String, String>,
+    val words: Map<Ordklasse, Map<String, WordEntry>>, // ordklasse -> (input ord -> oversatt ord)
 ) {
-    // beholder forbokstav
+    // Beholder forbokstav
     fun lookup(word: String): String? {
-        val translated = words[word.lowercase()] ?: return null
+        val lowercase = word.lowercase()
+        // basically words[lowercase], but for using nested maps
+        val translated = words.values.firstNotNullOfOrNull { it[lowercase] }?.form ?: return null
         return if (word.first().isUpperCase()) translated.replaceFirstChar { it.uppercase() } else translated
     }
 }

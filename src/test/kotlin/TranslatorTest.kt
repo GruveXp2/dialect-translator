@@ -9,8 +9,13 @@ class TranslatorTest {
 
     private val ordliste = Ordliste(
         ORDLISTE_FORMAT_VERSION,
-        mapOf("jeg" to "æ", "deg" to "dæ", "også" to "au"),
+        mapOf(
+            Ordklasse.PRONOMEN to mapOf("jeg" to entry("æ"), "deg" to entry("dæ")),
+            Ordklasse.ADVERB to mapOf("også" to entry("au")),
+        ),
     )
+
+    private fun entry(form: String) = WordEntry(form, "2026-10-25")
 
     @Test
     fun `without ordliste the text is unchanged`() {

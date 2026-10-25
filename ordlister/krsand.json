@@ -1,10 +1,16 @@
 {
   "version": 1,
   "words": {
-    "jeg": "æ",
-    "meg": "mæ",
-    "deg": "dæ",
-    "skal": "ska",
-    "også": "au"
+    "pronomen": {
+      "jeg": { "form": "æ", "registered": "2026-10-25" },
+      "meg": { "form": "mæ", "registered": "2026-10-25" },
+      "deg": { "form": "dæ", "registered": "2026-10-25" }
+    },
+    "verb": {
+      "skal": { "form": "ska", "registered": "2026-10-25" }
+    },
+    "adverb": {
+      "også": { "form": "au", "registered": "2026-10-25" }
+    }
   }
 }
