@@ -46,3 +46,6 @@ bin/
 /.idea/
 /notater/
 /CLAUDE.md
+
+# tmp file when saving securely
+*.tmp
