@@ -110,4 +110,22 @@ class OrdlisteTest {
         saveOrdliste(ordliste, file)
         assertEquals(listOf("ordliste.json"), file.parentFile.list()!!.toList())
     }
+
+    @Test
+    fun `withWord adds the word to an existing ordklasse`() {
+        val updated = ordliste.withWord(Ordklasse.PRONOMEN, "meg", entry("mæ"))
+        assertEquals(listOf("jeg", "deg", "meg"), updated.words.getValue(Ordklasse.PRONOMEN).keys.toList())
+    }
+
+    @Test
+    fun `withWord adds a new ordklasse when needed`() {
+        val updated = ordliste.withWord(Ordklasse.ADVERB, "også", entry("au"))
+        assertEquals("au", updated.lookup("også"))
+    }
+
+    @Test
+    fun `withWord does not change the original ordliste`() {
+        ordliste.withWord(Ordklasse.ADVERB, "også", entry("au"))
+        assertEquals(null, ordliste.lookup("også"))
+    }
 }

@@ -1,9 +1,14 @@
 package dev.gruve
 
 import java.io.File
+import java.time.LocalDate
+
+private val ORDLISTE_FILE = File("ordlister/krsand.json")
+private val INHERITED_FILE = File("ordlister/krsand-inherited.json")
 
 fun main() {
-    val ordliste = loadOrdliste(File("ordlister/krsand.json"))
+    var ordliste = loadOrdliste(ORDLISTE_FILE)
+    var inherited = loadInheritedWords(INHERITED_FILE)
     println("[krsandmål|test_tokens|test_ordklasse]")
     while (true) {
         print("Skriv inn hva du vil gjør: ")
@@ -17,6 +22,36 @@ fun main() {
                     val input = readln()
 
                     if (input in listOf("exit", "stop", "stopp", "avslutt")) break
+
+                    // future: add so you can type /context to get the words or sentence around,
+                    // so you know if the word "helt" was used as whole or hero
+                    val unknownWords = unknownWords(input, ordliste, inherited)
+                    if (unknownWords.isNotEmpty()) {
+                        println("Ukjente ord trenger oversettelse. Enter -> bruk default, '-' -> hopp over, 'form:ordklasse' -> slepp menyen (f.eks. ska:verb)")
+                    }
+                    for (word in unknownWords) {
+                        while (true) {
+                            print("Ukjent: '$word', oversett: ")
+                            val answer = readln().trim().lowercase()
+                            if (answer == "-") break // hopp over ord
+                            val parts = answer.split(":", limit = 2)
+                            val form = parts[0]
+                            val ordklasse = if (parts.size == 2) ordklasseFromAbbreviation(parts[1]) else askOrdklasse()
+                            if (ordklasse == null) {
+                                println("Ukjent ordklasse '${parts[1]}', prøv igjen")
+                                continue
+                            }
+                            val today = LocalDate.now().toString()
+                            if (form.isEmpty() || form == word) { // i tilfelle de skriver det samme som default
+                                inherited = inherited.withWord(ordklasse, word, today)
+                                saveInheritedWords(inherited, INHERITED_FILE)
+                            } else {
+                                ordliste = ordliste.withWord(ordklasse, word, WordEntry(form, today))
+                                saveOrdliste(ordliste, ORDLISTE_FILE)
+                            }
+                            break
+                        }
+                    }
 
                     println("Oversatt t krsandmål: ${translate(input, ordliste)}\n")
                 }
