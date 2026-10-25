@@ -29,6 +29,8 @@ data class Ordliste(
 
     fun withWord(ordklasse: Ordklasse, word: String, entry: WordEntry) = copy(words = words.plusWord(ordklasse, word, entry))
 
+    fun withoutWord(ordklasse: Ordklasse, word: String) = copy(words = words.minusWord(ordklasse, word))
+
     fun sorted() = copy(words = words.sorted())
 }
 

@@ -15,6 +15,12 @@ fun <T> Map<Ordklasse, Map<String, T>>.plusWord(ordklasse: Ordklasse, word: Stri
     return this + (ordklasse to ordklasseWords)
 }
 
+// samme som over bare man fjerner et ord istedet
+fun <T> Map<Ordklasse, Map<String, T>>.minusWord(ordklasse: Ordklasse, word: String): Map<Ordklasse, Map<String, T>> {
+    val ordklasseWords = getOrElse(ordklasse) { emptyMap() } - word
+    return if (ordklasseWords.isEmpty()) this - ordklasse else this + (ordklasse to ordklasseWords) // this[ordklasse] = ordklassewords
+}
+
 fun <T> Map<Ordklasse, Map<String, T>>.sorted(): Map<Ordklasse, Map<String, T>> {
     val norwegian = Collator.getInstance(Locale.of("nb"))
     return toSortedMap().mapValues { (_, ordklasseWords) -> ordklasseWords.toSortedMap(norwegian) }

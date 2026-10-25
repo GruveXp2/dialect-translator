@@ -9,7 +9,30 @@ private val INHERITED_FILE = File("ordlister/krsand-inherited.json")
 fun main() {
     var ordliste = loadOrdliste(ORDLISTE_FILE)
     var inherited = loadInheritedWords(INHERITED_FILE)
-    println("[krsandmål|test_tokens|test_ordklasse]")
+
+    // lokal funksjon som kan endre på ordliste/inherited
+    fun askAndRegister(word: String) {
+        while (true) {
+            print("'$word', oversett: ")
+            val answer = readln().trim().lowercase()
+            if (answer == "-") return // hopp over ord
+            val parts = answer.split(":", limit = 2)
+            val form = parts[0]
+            val ordklasse = if (parts.size == 2) ordklasseFromAbbreviation(parts[1]) else askOrdklasse()
+            if (ordklasse == null) {
+                println("Ukjent ordklasse '${parts[1]}', prøv igjen")
+                continue
+            }
+            val (newOrdliste, newInherited) = register(ordliste, inherited, ordklasse, word, form, LocalDate.now().toString())
+            ordliste = newOrdliste
+            inherited = newInherited
+            saveOrdliste(ordliste, ORDLISTE_FILE)
+            saveInheritedWords(inherited, INHERITED_FILE)
+            return
+        }
+    }
+
+    println("[krsandmål|registrer|test_tokens|test_ordklasse]")
     while (true) {
         print("Skriv inn hva du vil gjør: ")
         when (val oper = readln()) {
@@ -29,32 +52,15 @@ fun main() {
                     if (unknownWords.isNotEmpty()) {
                         println("Ukjente ord trenger oversettelse. Enter -> bruk default, '-' -> hopp over, 'form:ordklasse' -> slepp menyen (f.eks. ska:verb)")
                     }
-                    for (word in unknownWords) {
-                        while (true) {
-                            print("Ukjent: '$word', oversett: ")
-                            val answer = readln().trim().lowercase()
-                            if (answer == "-") break // hopp over ord
-                            val parts = answer.split(":", limit = 2)
-                            val form = parts[0]
-                            val ordklasse = if (parts.size == 2) ordklasseFromAbbreviation(parts[1]) else askOrdklasse()
-                            if (ordklasse == null) {
-                                println("Ukjent ordklasse '${parts[1]}', prøv igjen")
-                                continue
-                            }
-                            val today = LocalDate.now().toString()
-                            if (form.isEmpty() || form == word) { // i tilfelle de skriver det samme som default
-                                inherited = inherited.withWord(ordklasse, word, today)
-                                saveInheritedWords(inherited, INHERITED_FILE)
-                            } else {
-                                ordliste = ordliste.withWord(ordklasse, word, WordEntry(form, today))
-                                saveOrdliste(ordliste, ORDLISTE_FILE)
-                            }
-                            break
-                        }
-                    }
+                    for (word in unknownWords) askAndRegister(word)
 
                     println("Oversatt t krsandmål: ${translate(input, ordliste)}\n")
                 }
+            }
+            "registrer" -> { // for å manuellt legge til eller rette en feil man har gjort
+                print("Bokmålsord: ")
+                val word = readln().trim().lowercase()
+                if (word.isNotEmpty()) askAndRegister(word)
             }
             "test_tokens" -> {
                 print("Skriv inn ei setning: ")

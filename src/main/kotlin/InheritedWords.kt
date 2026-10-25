@@ -21,6 +21,8 @@ data class InheritedWords(
     fun withWord(ordklasse: Ordklasse, word: String, registered: String) =
         copy(words = words.plusWord(ordklasse, word, registered))
 
+    fun withoutWord(ordklasse: Ordklasse, word: String) = copy(words = words.minusWord(ordklasse, word))
+
     fun sorted() = copy(words = words.sorted())
 }
 
