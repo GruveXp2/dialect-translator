@@ -10,12 +10,18 @@ const val ORDLISTE_FORMAT_VERSION = 1
 @Serializable
 data class Ordliste(
     val version: Int,
-    val words: Map<String, String>, // FellesNorsk(=radikalt bokmål) -> dialektform
-)
+    val words: Map<String, String>,
+) {
+    // beholder forbokstav
+    fun lookup(word: String): String? {
+        val translated = words[word.lowercase()] ?: return null
+        return if (word.first().isUpperCase()) translated.replaceFirstChar { it.uppercase() } else translated
+    }
+}
 
 fun parseOrdliste(json: String): Ordliste {
     val ordliste = Json.decodeFromString<Ordliste>(json)
-    require(ordliste.version == ORDLISTE_FORMAT_VERSION) {
+    require(ordliste.version == ORDLISTE_FORMAT_VERSION) { // migration will prob be added in the future when needed
         "Ordlista har versjon ${ordliste.version}, men programmet støtter bare versjon $ORDLISTE_FORMAT_VERSION"
     }
     return ordliste

@@ -1,4 +1,10 @@
 {
   "version": 1,
-  "words": {}
+  "words": {
+    "jeg": "æ",
+    "meg": "mæ",
+    "deg": "dæ",
+    "skal": "ska",
+    "også": "au"
+  }
 }

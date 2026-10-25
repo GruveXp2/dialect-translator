@@ -1,23 +1,24 @@
 package dev.gruve
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.io.File
+
 fun main() {
-    print("[søgnemål|test_tokens|test_ordklasse]")
+    val ordliste = loadOrdliste(File("ordlister/krsand.json"))
+    println("[krsandmål|test_tokens|test_ordklasse]")
     while (true) {
         print("Skriv inn hva du vil gjør: ")
-        when (readln()) {
-            "søgnemål" -> {
+        when (val oper = readln()) {
+            "krsandmål" -> {
                 while (true) {
                     println("Skriv 'exit' for å avslutte")
                     // blir først kristiansandsk ettersom andre på min alder og meg har søgnedialekta nesten dødd ut,
-                    // og importert krsandsk istedet
+                    // og importert ei blanding av krsandsk og østlandsk istedet
                     print("Skriv inn ei setning som skal oversettes t krsandmål: ")
                     val input = readln()
 
                     if (input in listOf("exit", "stop", "stopp", "avslutt")) break
 
-                    println("Oversatt t krsandmål: ${translate(input)}\n")
+                    println("Oversatt t krsandmål: ${translate(input, ordliste)}\n")
                 }
             }
             "test_tokens" -> {
@@ -30,6 +31,7 @@ fun main() {
                 val ordklasse = askOrdklasse()
                 println("Du valgte: $ordklasse\n")
             }
+            else -> println("Ugyldig valg '$oper'")
         }
     }
 }
@@ -48,11 +50,6 @@ fun askOrdklasse(): Ordklasse {
         print("Skriv ordklasse (forkortelse): ")
         val ordklasse = ordklasseFromAbbreviation(readln())
         if (ordklasse != null) return ordklasse
-        println("Ugyldig valg, prøv igjen.")
+        println("Ugyldig valg, prøv igjen")
     }
-}
-
-fun translate(text: String): String {
-    val tokens = tokenize(text)
-    return combine(tokens)
 }
