@@ -6,7 +6,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 import java.io.File
 
 // file format version
-const val ORDLISTE_FORMAT_VERSION = 1
+const val ORDLISTE_FORMAT_VERSION = 2
 
 @Serializable
 data class WordEntry(
@@ -17,15 +17,11 @@ data class WordEntry(
 @Serializable
 data class Ordliste(
     val version: Int,
-    val words: Map<Ordklasse, Map<String, WordEntry>>, // ordklasse -> (input ord -> oversatt ord)
+    val words: Map<Ordklasse, Map<String, WordEntry>> = emptyMap(), // ordklasse -> (input ord -> oversatt ord)
+    val pronomen: Pronomen = Pronomen(),
 ) {
-    // Beholder forbokstav
-    fun lookup(word: String): String? {
-        val lowercase = word.lowercase()
-        // basically words[lowercase], but for using nested maps
-        val translated = words.values.firstNotNullOfOrNull { it[lowercase] }?.form ?: return null
-        return if (word.first().isUpperCase()) translated.replaceFirstChar { it.uppercase() } else translated
-    }
+    // basically words[word], but for using nested maps.
+    fun lookup(word: String): String? = words.values.firstNotNullOfOrNull { it[word] }?.form
 
     fun withWord(ordklasse: Ordklasse, word: String, entry: WordEntry) = copy(words = words.plusWord(ordklasse, word, entry))
 

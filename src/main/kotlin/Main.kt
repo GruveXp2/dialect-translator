@@ -3,12 +3,14 @@ package dev.gruve
 import java.io.File
 import java.time.LocalDate
 
-private val ORDLISTE_FILE = File("ordlister/krsand.json")
-private val INHERITED_FILE = File("ordlister/krsand-inherited.json")
+private val KRISTIANSAND_FILE = File("ordlister/krsand.json")
+private val KRISTIANSAND_INHERITED_FILE = File("ordlister/krsand-inherited.json")
+private val BOKMÅL_FILE = File("ordlister/bokmål.json")
 
 fun main() {
-    var ordliste = loadOrdliste(ORDLISTE_FILE)
-    var inherited = loadInheritedWords(INHERITED_FILE)
+    val bokmål = loadOrdliste(BOKMÅL_FILE)
+    var kristiansand = loadOrdliste(KRISTIANSAND_FILE)
+    var inherited = loadInheritedWords(KRISTIANSAND_INHERITED_FILE)
 
     // lokal funksjon som kan endre på ordliste/inherited
     fun askAndRegister(word: String) {
@@ -23,11 +25,11 @@ fun main() {
                 println("Ukjent ordklasse '${parts[1]}', prøv igjen")
                 continue
             }
-            val (newOrdliste, newInherited) = register(ordliste, inherited, ordklasse, word, form, LocalDate.now().toString())
-            ordliste = newOrdliste
+            val (newOrdliste, newInherited) = register(kristiansand, inherited, ordklasse, word, form, LocalDate.now().toString())
+            kristiansand = newOrdliste
             inherited = newInherited
-            saveOrdliste(ordliste, ORDLISTE_FILE)
-            saveInheritedWords(inherited, INHERITED_FILE)
+            saveOrdliste(kristiansand, KRISTIANSAND_FILE)
+            saveInheritedWords(inherited, KRISTIANSAND_INHERITED_FILE)
             return
         }
     }
@@ -48,13 +50,13 @@ fun main() {
 
                     // future: add so you can type /context to get the words or sentence around,
                     // so you know if the word "helt" was used as whole or hero
-                    val unknownWords = unknownWords(input, ordliste, inherited)
+                    val unknownWords = unknownWords(input, bokmål, kristiansand, inherited)
                     if (unknownWords.isNotEmpty()) {
                         println("Ukjente ord trenger oversettelse. Enter -> bruk default, '-' -> hopp over, 'form:ordklasse' -> slepp menyen (f.eks. ska:verb)")
                     }
                     for (word in unknownWords) askAndRegister(word)
 
-                    println("Oversatt t krsandmål: ${translate(input, ordliste)}\n")
+                    println("Oversatt t krsandmål: ${translate(input, bokmål, kristiansand)}\n")
                 }
             }
             "registrer" -> { // for å manuellt legge til eller rette en feil man har gjort

@@ -1,0 +1,16 @@
+{
+    "version": 2,
+    "pronomen": {
+        "personlig": {
+            "eg": { "nom": "jeg", "akk": "meg" },
+            "du": { "nom": "du", "akk": "deg" },
+            "han": { "nom": "han", "akk": "ham" },
+            "ho": { "nom": "hun", "akk": "henne" },
+            "den": { "nom": "den", "akk": "den" },
+            "det": { "nom": "det", "akk": "det" },
+            "vi": { "nom": "vi", "akk": "oss" },
+            "dere": { "nom": "dere", "akk": "dere" },
+            "de": { "nom": "de", "akk": "dem" }
+        }
+    }
+}

@@ -13,6 +13,11 @@ class RegistrationTest {
         mapOf(Ordklasse.PRONOMEN to mapOf("jeg" to WordEntry("æ", "2026-10-25"))),
     )
 
+    private val bokmål = Ordliste(
+        ORDLISTE_FORMAT_VERSION,
+        pronomen = Pronomen(mapOf("du" to mapOf(Kasus.NOMINATIV to "du"))),
+    )
+
     private val inherited = InheritedWords(
         INHERITED_FORMAT_VERSION,
         mapOf(Ordklasse.SUBSTANTIV to mapOf("hest" to "2026-10-25")),
@@ -20,17 +25,22 @@ class RegistrationTest {
 
     @Test
     fun `words in ordliste or inherited list are not unknown`() {
-        assertEquals(listOf("ser"), unknownWords("Jeg ser hest", ordliste, inherited))
+        assertEquals(listOf("ser"), unknownWords("Jeg ser hest", bokmål, ordliste, inherited))
+    }
+
+    @Test
+    fun `personlige pronomen in the bokmål table are not unknown`() {
+        assertEquals(listOf("ser"), unknownWords("Du ser hest", bokmål, ordliste, inherited))
     }
 
     @Test
     fun `unknown words are lowercase and without duplicates`() {
-        assertEquals(listOf("tur", "og"), unknownWords("Tur, tur og TUR", ordliste, inherited))
+        assertEquals(listOf("tur", "og"), unknownWords("Tur, tur og TUR", bokmål, ordliste, inherited))
     }
 
     @Test
     fun `numbers and symbols are not unknown words`() {
-        assertEquals(emptyList(), unknownWords("jeg 12 hest!", ordliste, inherited))
+        assertEquals(emptyList(), unknownWords("jeg 12 hest!", bokmål, ordliste, inherited))
     }
 
     private val date = "2026-10-26"

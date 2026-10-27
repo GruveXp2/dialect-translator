@@ -1,12 +1,13 @@
 package dev.gruve
 
 // sjekker etter ord som ikke er i ordlista eller er inherita
-fun unknownWords(text: String, ordliste: Ordliste, inherited: InheritedWords): List<String> =
+// temporary: man kanke registrere personlig pronomen enda
+fun unknownWords(text: String, from: Ordliste, to: Ordliste, inherited: InheritedWords): List<String> =
     tokenize(text)
         .filter { it.type == TokenType.ORD }
         .map { it.text.lowercase() }
         .distinct()
-        .filter { ordliste.lookup(it) == null && it !in inherited }
+        .filter { to.lookup(it) == null && it !in inherited && from.pronomen.readings(it).isEmpty() }
 
 // lagrer/flytter et spesifikt ord i riktig liste og submap, og evt fjerner tomme deler
 fun register(

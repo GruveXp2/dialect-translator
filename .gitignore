@@ -49,3 +49,5 @@ bin/
 
 # tmp file when saving securely
 *.tmp
+/notater.zip
+/notater0.zip

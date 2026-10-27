@@ -12,15 +12,15 @@ class OrdlisteTest {
 
     @Test
     fun `empty ordliste has no words`() {
-        val ordliste = parseOrdliste("""{ "version": 1, "words": {} }""")
-        assertEquals(1, ordliste.version)
+        val ordliste = parseOrdliste("""{ "version": 2, "words": {} }""")
+        assertEquals(2, ordliste.version)
         assertTrue(ordliste.words.isEmpty())
     }
 
     @Test
     fun `ordliste with another version is rejected`() {
         assertFailsWith<IllegalArgumentException> {
-            parseOrdliste("""{ "version": 2, "words": {} }""")
+            parseOrdliste("""{ "version": 1, "words": {} }""")
         }
     }
 
@@ -29,7 +29,7 @@ class OrdlisteTest {
         val ordliste = parseOrdliste(
             """
             {
-              "version": 1,
+              "version": 2,
               "words": {
                 "pronomen": { "jeg": { "form": "æ", "registered": "2026-10-25" } },
                 "adverb": { "også": { "form": "au", "registered": "2026-10-25" } }
@@ -44,7 +44,7 @@ class OrdlisteTest {
     @Test
     fun `unknown ordklasse is rejected`() {
         assertFailsWith<SerializationException> {
-            parseOrdliste("""{ "version": 1, "words": { "pron": {} } }""")
+            parseOrdliste("""{ "version": 2, "words": { "pron": {} } }""")
         }
     }
 
@@ -52,6 +52,33 @@ class OrdlisteTest {
     fun `the krsand ordliste file can be loaded`() {
         val ordliste = loadOrdliste(File("ordlister/krsand.json"))
         assertEquals(ORDLISTE_FORMAT_VERSION, ordliste.version)
+    }
+
+    @Test
+    fun `the bokmål file has all personlige pronomen`() {
+        val bokmål = loadOrdliste(File("ordlister/bokmål.json"))
+        assertEquals(listOf("eg", "du", "han", "ho", "den", "det", "vi", "dere", "de"), bokmål.pronomen.personlig.keys.toList())
+    }
+
+    @Test
+    fun `saved pronomen table has one pronomen per line`() {
+        val eg: PersonligPronomen = mapOf(Kasus.NOMINATIV to "æ", Kasus.AKKUSATIV to "mæ")
+        val file = tempFile()
+        saveOrdliste(Ordliste(ORDLISTE_FORMAT_VERSION, pronomen = Pronomen(mapOf("eg" to eg))), file)
+        assertEquals(
+            """
+            {
+                "version": 2,
+                "pronomen": {
+                    "personlig": {
+                        "eg": { "nom": "æ", "akk": "mæ" }
+                    }
+                }
+            }
+
+            """.trimIndent(),
+            file.readText(),
+        )
     }
 
     private fun entry(form: String) = WordEntry(form, "2026-10-25")
@@ -80,7 +107,7 @@ class OrdlisteTest {
         assertEquals(
             """
             {
-                "version": 1,
+                "version": 2,
                 "words": {
                     "verb": {
                         "skal": { "form": "ska", "registered": "2026-10-25" }
